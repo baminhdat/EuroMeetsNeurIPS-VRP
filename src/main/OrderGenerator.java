@@ -24,7 +24,7 @@ public class OrderGenerator {
     }
     public static ArrayList<Order> staticMode(){
         ArrayList<Order> orders = new ArrayList<>();
-        for(int i=1;i<dim;i++){
+        for(int i=0;i<dim;i++){
         Order o = new Order();
         o.customerID=i;
         o.timeWindowStart=timeWindow[i].first;

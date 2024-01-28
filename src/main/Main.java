@@ -28,15 +28,19 @@ public class Main {
             orders.addAll(OrderGenerator.staticMode());
             int vehicles_number=availableVehicles.size();
             long start = System.nanoTime();
+            while(true){
             GA solver = new GA(vehicles_number,orders);
-            for (int i = 1; i < maxGeneration; i++) {
-                solver.iterate();
+            solver.run();
+            if(solver.population.best.served_orders==solver.dim){
+                long end = System.nanoTime();
+                System.out.println("The GA ends in approximately " + (end - start) / 1000000000 + "s");
+                solver.finalization();
+                break;
             }
-            long end = System.nanoTime();
-            System.out.println("The GA ends in " + (end - start) / 1000000 + "ms");
-            orders.removeAll(solver.finalization());
-            for(OrderGenerator.Order o : orders ){
-                System.out.print(o.customerID+" ");
+            else{
+                System.out.println("Failed to solve with "+vehicles_number+" vehicles");
+                vehicles_number++;
+            }
             }
         }
         //Dynamic Variant
@@ -102,9 +106,7 @@ public class Main {
                     break;
                 }
                 GA solver = new GA(avg_max_vehicles+additional_vehicles,cur_epoch_orders);
-                for (int i = 1; i < maxGeneration; i++) {
-                    solver.iterate();
-                }
+                solver.run();
                 if(solver.population.best.served_orders<cur_epoch_orders.size()){
                     System.out.println("Failed to solve with "+(avg_max_vehicles+additional_vehicles)+" vehicles");
                     additional_vehicles+=1;
@@ -148,10 +150,7 @@ public class Main {
             cur_epoch_orders.addAll(orders);
             int max = availableVehicles.size()-awayVehicles.size();
             GA solver = new GA(max,orders);
-            for (int i = 1; i < maxGeneration; i++) {
-                solver.iterate();
-            }
-            orders.removeAll(solver.finalization());
+            solver.run();
             for(OrderGenerator.Order o : orders ){
                 System.out.print(o.customerID+" ");
             }
